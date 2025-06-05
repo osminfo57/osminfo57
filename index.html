@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Networking Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f9f6fc 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .quiz-container {
+            max-width: 450px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 28px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .timer, .score {
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .timer {
+            color: #e74c3c;
+        }
+        
+        .score {
+            color: #27ae60;
+        }
+        
+        .question-container {
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #3498db;
+            font-size: 16px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-label:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: transparent;
+            transition: background-color 0.3s;
+        }
+        
+        .option-label.selected::before {
+            background-color: #3498db;
+        }
+        
+        .option-label.correct::before {
+            background-color: #27ae60;
+        }
+        
+        .option-label.incorrect::before {
+            background-color: #e74c3c;
+        }
+        
+        .option-radio {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .option-text {
+            flex: 1;
+        }
+        
+        .option-label.selected {
+            background-color: #e3f2fd;
+            border-color: #3498db;
+        }
+        
+        .option-label.correct {
+            background-color: #e8f5e9;
+            border-color: #27ae60;
+            color: #27ae60;
+        }
+        
+        .option-label.incorrect {
+            background-color: #ffebee;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            display: none;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .prev-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .prev-btn:hover:not(:disabled) {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+        }
+        
+        .next-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .next-btn:hover:not(:disabled) {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .explanation-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .explanation-btn:hover:not(:disabled) {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn {
+            background-color: #27ae60;
+            color: white;
+            display: none;
+            margin: 20px auto;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+        }
+        
+        .results-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .results-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .final-score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .restart-btn {
+            background-color: #3498db;
+            color: white;
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        
+        .restart-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            height: 12px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .start-screen h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .start-screen p {
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .start-btn {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .credits {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+            
+            .option-label {
+                padding: 10px 12px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+            
+            .navigation {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .navigation button {
+                flex: 1;
+                min-width: 100px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="start-screen" class="start-screen">
+            <h2>Computer Networking Quiz</h2>
+            <p>Test your knowledge of computer networking concepts with this 100-question practice exam. You'll have 100 minutes to complete it.</p>
+            <button class="start-btn" id="start-btn">Start Quiz</button>
+            <div class="credits">Prepared by: Osman B.</div>
+        </div>
+        
+        <div id="quiz-content" style="display: none;">
+            <h1>Computer Networking Quiz</h1>
+            
+            <div class="quiz-header">
+                <div class="timer">Time: <span id="time">100:00</span></div>
+                <div class="score">Score: <span id="score">0</span>/100</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number">Question <span id="current-question">1</span>/100</div>
+                <div class="question-text" id="question-text"></div>
+                
+                <div class="options-container" id="options-container"></div>
+                
+                <div class="explanation" id="explanation"></div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" id="prev-btn" disabled>Previous</button>
+                <button class="explanation-btn" id="explanation-btn" disabled>View Explanation</button>
+                <button class="next-btn" id="next-btn">Next</button>
+            </div>
+            
+            <button class="submit-btn" id="submit-btn">Submit Quiz</button>
+        </div>
+        
+        <div class="results-container" id="results-container">
+            <h2>Quiz Results</h2>
+            <div class="final-score" id="final-score"></div>
+            <p id="results-message"></p>
+            <button class="restart-btn" id="restart-btn">Restart Quiz</button>
+            <div class="credits">Prepared by: Osman B.</div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions data (100 questions from the document)
+        const questions = [
+            {
+                question: "1. OSI stands for _______",
+                options: [
+                    "open system interconnection",
+                    "operating system interface",
+                    "optical service implementation",
+                    "open service Internet"
+                ],
+                answer: 0,
+                explanation: "OSI is the abbreviation for Open System Interconnection. OSI model provides a structured plan on how applications communicate over a network, which also helps us to have a structured plan for troubleshooting. It is recognized by the ISO as the generalized model for computer network."
+            },
+            {
+                question: "2. The number of layers in ISO OSI reference model is _______",
+                options: [
+                    "4",
+                    "5",
+                    "6",
+                    "7"
+                ],
+                answer: 3,
+                explanation: "In OSI reference model, there are 7 layers namely Application, Presentation, Session, Transport, Network, Data Link and Physical layer. Each layer uses a protocol to perform its designated function."
+            },
+            {
+                question: "3. TCP/IP model does not have _______ layer but OSI model have this layer.",
+                options: [
+                    "session layer",
+                    "transport layer",
+                    "application layer",
+                    "network layer"
+                ],
+                answer: 0,
+                explanation: "In OSI reference model, there are two layers which are not present in TCP/IP model. They are Presentation and Session layer. The functions of Presentation and Session layer in the OSI model are handled by the transport layer itself in TCP/IP."
+            },
+            {
+                question: "4. Which layer is used to link the network support layers and user support layers?",
+                options: [
+                    "session layer",
+                    "data link layer",
+                    "transport layer",
+                    "network layer"
+                ],
+                answer: 2,
+                explanation: "Physical, data link and network layers are network support layers and session, presentation and application layers are user support layers. The transport layer links these layers by segmenting and rearranging the data. It uses protocols like TCP and UDP."
+            },
+            {
+                question: "5. Which address is used on the internet for employing the TCP/IP protocols?",
+                options: [
+                    "physical address and logical address",
+                    "port address",
+                    "specific address",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "The physical, logical, port and specific addresses are used in TCP/IP protocol. All the addressing schemes, that is physical (MAC) and logical address, port address and specific address are employed in both TCP/IP model and OSI model."
+            },
+            {
+                question: "6. TCP/IP model was developed _______ the OSI model.",
+                options: [
+                    "prior to",
+                    "after",
+                    "simultaneous to",
+                    "with no link to"
+                ],
+                answer: 0,
+                explanation: "Several TCP/IP prototypes were developed at multiple research centers between 1978 and 1983, whereas OSI reference model was developed in the year 1984. TCP/IP was developed with the intention to create a model for the Internet while OSI was intended to be a general network model."
+            },
+            {
+                question: "7. Which layer is responsible for process to process delivery in a general network model?",
+                options: [
+                    "network layer",
+                    "transport layer",
+                    "session layer",
+                    "data link layer"
+                ],
+                answer: 1,
+                explanation: "The role of Transport layer (Layer 4) is to establish a logical end to end connection between two systems in a network. The protocols used in Transport layer is TCP and UDP. The transport layer is responsible for segmentation of the data. It uses ports for the implementation of process-to-process delivery."
+            },
+            {
+                question: "8. Which address is used to identify a process on a host by the transport layer?",
+                options: [
+                    "physical address",
+                    "logical address",
+                    "port address",
+                    "specific address"
+                ],
+                answer: 2,
+                explanation: "A port number is a way to identify a specific process to which an Internet or other network message is to be forwarded when it arrives at a server. Some examples of port numbers are port 20 which is used for FTP data, port 22 which is used for SSH remote login, and port 23 which is used for TELNET."
+            },
+            {
+                question: "9. Which layer provides the services to user?",
+                options: [
+                    "application layer",
+                    "session layer",
+                    "presentation layer",
+                    "physical layer"
+                ],
+                answer: 0,
+                explanation: "In networking, a user mainly interacts with application layer to create and send information to other computer or network. Application layer provides the interface between applications and the network. It is the top-most layer in both the TCP/IP and the OSI model."
+            },
+            {
+                question: "10. Transmission data rate is decided by _______",
+                options: [
+                    "network layer",
+                    "physical layer",
+                    "data link layer",
+                    "transport layer"
+                ],
+                answer: 1,
+                explanation: "Physical layer is a layer 1 device which deals with network cables or the standards in use like connectors, pins, electric current used etc. Basically the transmission speed is determined by the cables and connectors used. Hence it is physical layer that determines the transmission speed in network."
+            },
+            {
+                question: "11. In terms of the size of the network the correct order (ascending) is --",
+                options: [
+                    "PAN, MAN, LAN, WAN",
+                    "LAN, MAN, WAN, PAN",
+                    "PAN, LAN, MAN, WAN",
+                    "LAN, PAN, MAN, WAN"
+                ],
+                answer: 2,
+                explanation: "Personal Area Network, Local Area Network, Metropolitan Area Network, Wide Area Network is the correct order in terms of size of the network from smallest to largest."
+            },
+            {
+                question: "12. How many layers are there in the OSI reference model?",
+                options: [
+                    "4",
+                    "5",
+                    "6",
+                    "7"
+                ],
+                answer: 3,
+                explanation: "The 7 layers are: Physical Layer, Data Link Layer, Network Layer, Transport Layer, Session Layer, Presentation Layer, Application Layer."
+            },
+            {
+                question: "13. Logical Addressing and Routing are functions of which layer?",
+                options: [
+                    "Physical Layer",
+                    "Transport Layer",
+                    "Data Link Layer",
+                    "Network Layer"
+                ],
+                answer: 3,
+                explanation: "Logical Addressing and Routing are functions of the Network Layer."
+            },
+            {
+                question: "14. Flow Control and Error Control are functions of which layer?",
+                options: [
+                    "Physical Layer",
+                    "Application Layer",
+                    "Data Link Layer",
+                    "Network Layer"
+                ],
+                answer: 2,
+                explanation: "Flow Control and Error Control are functions of the Data Link Layer."
+            },
+            {
+                question: "15. Dialog Control and Synchronization are function of which layer?",
+                options: [
+                    "Presentation Layer",
+                    "Application Layer",
+                    "Session Layer",
+                    "Data Link Layer"
+                ],
+                answer: 2,
+                explanation: "Dialog Control and Synchronization are function of the Session Layer."
+            },
+            {
+                question: "16. Encryption and Compression are functions of which OSI layer?",
+                options: [
+                    "Presentation Layer",
+                    "Application Layer",
+                    "Session Layer",
+                    "Data Link Layer"
+                ],
+                answer: 0,
+                explanation: "Encryption and Compression are functions of the Presentation Layer."
+            },
+            {
+                question: "17. File, Transfer, Access and Management (FTAM) is a function of which layer?",
+                options: [
+                    "Presentation Layer",
+                    "Application Layer",
+                    "Session Layer",
+                    "Data Link Layer"
+                ],
+                answer: 1,
+                explanation: "FTAM is an Application Layer function."
+            },
+            {
+                question: "18. How many layers are present in the TCP/IP Reference model?",
+                options: [
+                    "6",
+                    "7",
+                    "5",
+                    "4"
+                ],
+                answer: 3,
+                explanation: "There are 4 layers in the TCP/IP reference model: Link, Internet, Transport and Application."
+            },
+            {
+                question: "19. The IETF standards documents are called _______",
+                options: [
+                    "RFC",
+                    "RCF",
+                    "ID",
+                    "DFC"
+                ],
+                answer: 0,
+                explanation: "RFC stands for Request For Comments and they are documents that describe methods, behaviors, research, or innovations applicable to the working of the Internet."
+            },
+            {
+                question: "20. In the layer hierarchy as the data packet moves from the upper to the lower layers, headers are _______",
+                options: [
+                    "Added",
+                    "Removed",
+                    "Rearranged",
+                    "Modified"
+                ],
+                answer: 0,
+                explanation: "As data moves down the OSI model layers, each layer adds its own header information to the packet."
+            },
+            {
+                question: "21. The structure or format of data is called _______",
+                options: [
+                    "Syntax",
+                    "Semantics",
+                    "Struct",
+                    "Formatting"
+                ],
+                answer: 0,
+                explanation: "In networking, syntax refers to the structure or format of the data, meaning the order in which they are presented."
+            },
+            {
+                question: "22. Communication between a computer and a keyboard involves _______ transmission.",
+                options: [
+                    "Automatic",
+                    "Half-duplex",
+                    "Full-duplex",
+                    "Simplex"
+                ],
+                answer: 3,
+                explanation: "In simplex transmission, data flows in single direction which in this case refers to the data flowing from the keyboard to the computer. Another example would be of the mouse where the data flows from the mouse to the computer only."
+            },
+            {
+                question: "23. The first Network was called _______",
+                options: [
+                    "CNNET",
+                    "NSFNET",
+                    "ASAPNET",
+                    "ARPANET"
+                ],
+                answer: 3,
+                explanation: "ARPANET stands for Advanced Research Projects Agency Networks. It was the first network to be implemented which used the TCP/IP protocol in the year 1969."
+            },
+            {
+                question: "24. A _______ is the physical path over which a message travels.",
+                options: [
+                    "Path",
+                    "Medium",
+                    "Protocol",
+                    "Route"
+                ],
+                answer: 1,
+                explanation: "Messages travel from sender to receiver via a physical path called the medium using a set of methods/rules called protocol. Mediums can be guided (wired) or unguided (wireless)."
+            },
+            {
+                question: "25. Which organization has authority over interstate and international commerce in the communications field?",
+                options: [
+                    "ITU-T",
+                    "IEEE",
+                    "FCC",
+                    "ISOC"
+                ],
+                answer: 2,
+                explanation: "FCC is the abbreviation for Federal Communications Commission. FCC is responsible for regulating all interstate communications originating or terminating in USA. It was founded in the year 1934."
+            },
+            {
+                question: "26. Which of this is not a network edge device?",
+                options: [
+                    "PC",
+                    "Smartphones",
+                    "Servers",
+                    "Switch"
+                ],
+                answer: 3,
+                explanation: "Network edge devices refer to host systems, which can host applications like web browser. A switch can't operate as a host, but as a central device which can be used to manage network communication."
+            },
+            {
+                question: "27. A _______ set of rules that governs data communication.",
+                options: [
+                    "Protocols",
+                    "Standards",
+                    "RFCs",
+                    "Servers"
+                ],
+                answer: 0,
+                explanation: "In communications, a protocol refers to a set of rules and regulations that allow a network of nodes to transmit and receive information. Each layer in the network model has a protocol set, for example, the transport layer has TCP and UDP protocols."
+            },
+            {
+                question: "28. Three or more devices share a link in _______ connection.",
+                options: [
+                    "Unipoint",
+                    "Multipoint",
+                    "Point to point",
+                    "Simplex"
+                ],
+                answer: 1,
+                explanation: "A multipoint communication is established when three or many network nodes are connected to each other. Frame relay, Ethernet and ATM are some examples of multipoint connections."
+            },
+            {
+                question: "29. The physical layer is concerned with _______",
+                options: [
+                    "bit-by-bit delivery",
+                    "process to process delivery",
+                    "application to application delivery",
+                    "port to port delivery"
+                ],
+                answer: 0,
+                explanation: "Physical layer deals with bit to bit delivery in networking. The data unit in the physical layer is bits. Process to process delivery or the port to port delivery is dealt in the transport layer."
+            },
+            {
+                question: "30. Which transmission media provides the highest transmission speed in a network?",
+                options: [
+                    "coaxial cable",
+                    "twisted pair cable",
+                    "optical fiber",
+                    "electrical cable"
+                ],
+                answer: 2,
+                explanation: "Fiber optics is considered to have the highest transmission speed among the all mentioned above. The fiber optics transmission runs at 1000Mb/s. It is called as 1000Base-Lx whereas IEEE standard for it is 802.3z. It is popularly used for modern day network connections due to its high transmission rate."
+            },
+            {
+                question: "31. Bits can be sent over guided and unguided media as analog signal by _______",
+                options: [
+                    "digital modulation",
+                    "amplitude modulation",
+                    "frequency modulation",
+                    "phase modulation"
+                ],
+                answer: 0,
+                explanation: "In analog modulation, digital low frequency baseband signal (digital bit stream) is transmitted over a higher frequency. Whereas in digital modulation the only difference is that the base band signal is of discrete amplitude level."
+            },
+            {
+                question: "32. The portion of physical layer that interfaces with the media access control sublayer is called _______",
+                options: [
+                    "physical signalling sublayer",
+                    "physical data sublayer",
+                    "physical address sublayer",
+                    "physical transport sublayer"
+                ],
+                answer: 0,
+                explanation: "The portion of physical layer that interfaces with the medium access control sublayer is Physical Signaling Sublayer. The main function of this layer is character encoding, reception, decoding and performs optional isolation functions."
+            },
+            {
+                question: "33. The physical layer provides _______",
+                options: [
+                    "mechanical specifications of electrical connectors and cables",
+                    "electrical specification of transmission line signal level",
+                    "specification for IR over optical fiber",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "Anything dealing with a network cable or the standards in use -- including pins, connectors and the electric current used is dealt in the physical layer (Layer 1). Physical layer deals with bit to bit delivery of the data aided by the various transmission mediums."
+            },
+            {
+                question: "34. In asynchronous serial communication the physical layer provides _______",
+                options: [
+                    "start and stop signalling",
+                    "flow control",
+                    "both start & stop signalling and flow control",
+                    "only start signalling"
+                ],
+                answer: 2,
+                explanation: "In asynchronous serial communication, the communication is not synchronized by clock signal. Instead of a start and stop signaling and flow control method is followed."
+            },
+            {
+                question: "35. The physical layer is responsible for _______",
+                options: [
+                    "line coding",
+                    "channel coding",
+                    "modulation",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "The physical layer is responsible for line coding, channel coding and modulation that is needed for the transmission of the information. The physical configuration including pins, connectors and the electric current used is dealt in the physical layer based on the requirement of the network application."
+            },
+            {
+                question: "36. The physical layer translates logical communication requests from the _______ into hardware specific operations.",
+                options: [
+                    "data link layer",
+                    "network layer",
+                    "trasnport layer",
+                    "application layer"
+                ],
+                answer: 0,
+                explanation: "Physical layer accepts data or information from the data link layer and converts it into hardware specific operations so as to transfer the message through physical cables. Some examples of the cables used are optical fiber cables, twisted pair cables and co-axial cables."
+            },
+            {
+                question: "37. A single channel is shared by multiple signals by _______",
+                options: [
+                    "analog modulation",
+                    "digital modulation",
+                    "multiplexing",
+                    "phase modulation"
+                ],
+                answer: 2,
+                explanation: "In communication and computer networks, the main goal is to share a scarce resource. This is done by multiplexing, where multiple analog or digital signals are combined into one signal over a shared medium."
+            },
+            {
+                question: "38. Wireless transmission of signals can be done via _______",
+                options: [
+                    "radio waves",
+                    "microwaves",
+                    "infrared",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "Wireless transmission is carried out by radio waves, microwaves and IR waves. These waves range from 3 Khz to above 300 Ghz and are more suitable for wireless transmission."
+            },
+            {
+                question: "39. The data link layer takes the packets from _______ and encapsulates them into frames for transmission.",
+                options: [
+                    "network layer",
+                    "physical layer",
+                    "transport layer",
+                    "application layer"
+                ],
+                answer: 0,
+                explanation: "In computer networks, the data from application layer is sent to transport layer and is converted to segments. These segments are then transferred to the network layer and these are called packets. These packets are then sent to data link layer where they are encapsulated into frames."
+            },
+            {
+                question: "40. Which of the following tasks is not done by data link layer?",
+                options: [
+                    "framing",
+                    "error control",
+                    "flow control",
+                    "channel coding"
+                ],
+                answer: 3,
+                explanation: "Channel coding is the function of physical layer. Data link layer mainly deals with framing, error control and flow control. Data link layer is the layer where the packets are encapsulated into frames."
+            },
+            {
+                question: "41. Which sublayer of the data link layer performs data link functions that depend upon the type of medium?",
+                options: [
+                    "logical link control sublayer",
+                    "media access control sublayer",
+                    "network interface control sublayer",
+                    "error control sublayer"
+                ],
+                answer: 1,
+                explanation: "Media access control (MAC) deals with transmission of data packets to and from the network-interface card, and also to and from another remotely shared channel. The MAC sublayer also prevents collision using protocols like CSMA/CD."
+            },
+            {
+                question: "42. Header of a frame generally contains _______",
+                options: [
+                    "synchronization bytes",
+                    "addresses",
+                    "frame identifier",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "In a frame, the header is a part of the data that contains all the required information about the transmission of the file. It contains information like synchronization bytes, addresses, frame identifier etc. It also contains error control information for reducing the errors in the transmitted frames."
+            },
+            {
+                question: "43. Automatic repeat request error management mechanism is provided by _______",
+                options: [
+                    "logical link control sublayer",
+                    "media access control sublayer",
+                    "network interface control sublayer",
+                    "application access control sublayer"
+                ],
+                answer: 0,
+                explanation: "The logical link control is a sublayer of data link layer whose main function is to manage traffic, flow and error control. The automatic repeat request error management mechanism is provided by the LLC when an error is found in the received frame at the receiver's end to inform the sender to re-send the frame."
+            },
+            {
+                question: "44. When 2 or more bits in a data unit has been changed during the transmission, the error is called _______",
+                options: [
+                    "random error",
+                    "burst error",
+                    "inverted error",
+                    "double error"
+                ],
+                answer: 1,
+                explanation: "When a single bit error occurs in a data, it is called single bit error. When more than a single bit of data is corrupted or has error, it is called burst error. If a single bit error occurs, the bit can be simply repaired by inverting it, but in case of a burst error, the sender has to send the frame again."
+            },
+            {
+                question: "45. CRC stands for _______",
+                options: [
+                    "cyclic redundancy check",
+                    "code repeat check",
+                    "code redundancy check",
+                    "cyclic repeat check"
+                ],
+                answer: 0,
+                explanation: "Cyclic redundancy check is a code that is added to a data which helps us to identify any error that occurred during the transmission of the data. CRC is only able to detect errors, not correct them. CRC is inserted in the frame trailer."
+            },
+            {
+                question: "46. Which of the following is a data link protocol?",
+                options: [
+                    "ethernet",
+                    "point to point protocol",
+                    "hdlc",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "There are many data link layer protocols. Some of them are SDLC (synchronous data link protocol), HDLC (High level data link control), SLIP (serial line interface protocol), PPP (Point to point protocol) etc. These protocols are used to provide the logical link control function of the Data Link Layer."
+            },
+            {
+                question: "47. Which of the following is the multiple access protocol for channel access control?",
+                options: [
+                    "CSMA/CD",
+                    "CSMA/CA",
+                    "Both CSMA/CD & CSMA/CA",
+                    "HDLC"
+                ],
+                answer: 2,
+                explanation: "In CSMA/CD, it deals with detection of collision after collision has occurred, whereas CSMA/CA deals with preventing collision. CSMA/CD is abbreviation for Carrier Sensing Multiple Access/Collision detection. CSMA/CA is abbreviation for Carrier Sensing Multiple Access/Collision Avoidance."
+            },
+            {
+                question: "48. The technique of temporarily delaying outgoing acknowledgements so that they can be hooked onto the next outgoing data frame is called _______",
+                options: [
+                    "piggybacking",
+                    "cyclic redundancy check",
+                    "fletcher's checksum",
+                    "parity check"
+                ],
+                answer: 0,
+                explanation: "Piggybacking is a technique in which the acknowledgment is temporarily delayed so as to be hooked with the next outgoing data frame. It saves a lot of channel bandwidth as in non-piggybacking system, some bandwidth is reserved for acknowledgement."
+            },
+            {
+                question: "49. The network layer is concerned with _______ of data.",
+                options: [
+                    "bits",
+                    "frames",
+                    "packets",
+                    "bytes"
+                ],
+                answer: 2,
+                explanation: "In computer networks, the data from the application layer is sent to the transport layer and is converted to segments. These segments are then transferred to the network layer and these are called packets."
+            },
+            {
+                question: "50. Which one of the following is not a function of network layer?",
+                options: [
+                    "routing",
+                    "inter-networking",
+                    "congestion control",
+                    "error control"
+                ],
+                answer: 3,
+                explanation: "In the OSI model, network layer is the third layer and it provides data routing paths for network communications. Error control is a function of the data link layer and the transport layer."
+            },
+            {
+                question: "51. A 4 byte IP address consists of _______",
+                options: [
+                    "only network address",
+                    "only host address",
+                    "network address & host address",
+                    "network address & MAC address"
+                ],
+                answer: 2,
+                explanation: "An ip address which is 32 bits long, that means it is of 4 bytes and is composed of a network and host portion and it depends on address class. The size of the host address and network address depends upon the class of the address in classful IP addressing."
+            },
+            {
+                question: "52. In virtual circuit network each packet contains _______",
+                options: [
+                    "full source and destination address",
+                    "a short VC number",
+                    "only source address",
+                    "only destination address"
+                ],
+                answer: 1,
+                explanation: "A short VC number also called as VCID (virtual circuit identifier) is a type of identifier which is used to distinguish between several virtual circuits in a connection oriented circuit switched network. Each virtual circuit is used to transfer data over a larger packet switched network."
+            },
+            {
+                question: "53. Which of the following routing algorithms can be used for network layer design?",
+                options: [
+                    "shortest path algorithm",
+                    "distance vector routing",
+                    "link state routing",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "The routing algorithm is what decides where a packet should go next. There are several routing techniques like shortest path algorithm, static and dynamic routing, decentralized routing, distance vector routing, link state routing, Hierarchical routing etc."
+            },
+            {
+                question: "54. Which of the following is not correct in relation to multi-destination routing?",
+                options: [
+                    "is same as broadcast routing",
+                    "contains the list of all destinations",
+                    "data is not sent by packets",
+                    "there are multiple receivers"
+                ],
+                answer: 2,
+                explanation: "In multi-destination routing, there is more than one receiver and the route for each destination which is contained in a list of destinations is to be found by the routing algorithm. Multi-destination routing is also used in broadcasting."
+            },
+            {
+                question: "55. A subset of a network that includes all the routers but contains no loops is called _______",
+                options: [
+                    "spanning tree",
+                    "spider structure",
+                    "spider tree",
+                    "special tree"
+                ],
+                answer: 0,
+                explanation: "Spanning tree protocol (STP) is a network protocol that creates a loop free logical topology for ethernet networks. It is a layer 2 protocol that runs on bridges and switches. The main purpose of STP is to ensure that you do not create loops when you have redundant paths in your network."
+            },
+            {
+                question: "56. Which one of the following algorithm is not used for congestion control?",
+                options: [
+                    "traffic aware routing",
+                    "admission control",
+                    "load shedding",
+                    "routing information protocol"
+                ],
+                answer: 3,
+                explanation: "The Routing Information Protocol (RIP) is used by the network layer for the function of dynamic routing. Congestion control focuses on the flow of the traffic in the network and uses algorithms like traffic aware routing, admission control and load shedding to deal with congestion."
+            },
+            {
+                question: "57. The network layer protocol for internet is _______",
+                options: [
+                    "ethernet",
+                    "internet protocol",
+                    "hypertext transfer protocol",
+                    "file transfer protocol"
+                ],
+                answer: 1,
+                explanation: "There are several protocols used in Network layer. Some of them are IP, ICMP, CLNP, ARP, IPX, HRSP etc. Hypertext transfer protocol is for application layer and ethernet protocol is for data link layer."
+            },
+            {
+                question: "58. ICMP is primarily used for _______",
+                options: [
+                    "error and diagnostic functions",
+                    "addressing",
+                    "forwarding",
+                    "routing"
+                ],
+                answer: 0,
+                explanation: "ICMP abbreviation for Internet Control Message Protocol is used by networking devices to send error messages and operational information indicating a host or router cannot be reached. ICMP operates over the IP packet to provide error reporting functionality as IP by itself cannot report errors."
+            },
+            {
+                question: "59. Transport layer aggregates data from different applications into a single stream before passing it to _______",
+                options: [
+                    "network layer",
+                    "data link layer",
+                    "application layer",
+                    "physical layer"
+                ],
+                answer: 0,
+                explanation: "The flow of data in the OSI model flows in following manner Application -> Presentation -> Session -> Transport -> Network -> Data Link -> Physical. Each and every layer has its own set of functions and protocols to ensure efficient network performance."
+            },
+            {
+                question: "60. Which of the following are transport layer protocols used in networking?",
+                options: [
+                    "TCP and FTP",
+                    "UDP and HTTP",
+                    "TCP and UDP",
+                    "HTTP and FTP"
+                ],
+                answer: 2,
+                explanation: "Both TCP and UDP are transport layer protocol in networking. TCP is an abbreviation for Transmission Control Protocol and UDP is an abbreviation for User Datagram Protocol. TCP is connection oriented whereas UDP is connectionless."
+            },
+            {
+                question: "61. User datagram protocol is called connectionless because _______",
+                options: [
+                    "all UDP packets are treated independently by transport layer",
+                    "it sends data as a stream of related packets",
+                    "it is received in the same order as sent order",
+                    "it sends data very quickly"
+                ],
+                answer: 0,
+                explanation: "UDP is an alternative for TCP and it is used for those purposes where speed matters most whereas loss of data is not a problem. UDP is connectionless whereas TCP is connection oriented."
+            },
+            {
+                question: "62. Transmission control protocol _______",
+                options: [
+                    "is a connection-oriented protocol",
+                    "uses a three way handshake to establish a connection",
+                    "receives data from application as a single stream",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "TCP provides reliable and ordered delivery of a stream of bytes between hosts communicating via an IP network. Major internet applications like www, email, file transfer etc rely on TCP. TCP is connection oriented and it is optimized for accurate delivery rather than timely delivery."
+            },
+            {
+                question: "63. An endpoint of an inter-process communication flow across a computer network is called _______",
+                options: [
+                    "socket",
+                    "pipe",
+                    "port",
+                    "machine"
+                ],
+                answer: 0,
+                explanation: "Socket is one end point in a two way communication link in the network. TCP layer can identify the application that data is destined to be sent by using the port number that is bound to socket."
+            },
+            {
+                question: "64. Socket-style API for windows is called _______",
+                options: [
+                    "wsock",
+                    "winsock",
+                    "wins",
+                    "sockwi"
+                ],
+                answer: 1,
+                explanation: "Winsock is a programming interface which deals with input output requests for internet applications in windows OS. It defines how windows network software should access network services."
+            },
+            {
+                question: "65. Which one of the following is a version of UDP with congestion control?",
+                options: [
+                    "datagram congestion control protocol",
+                    "stream control transmission protocol",
+                    "structured stream transport",
+                    "user congestion control protocol"
+                ],
+                answer: 0,
+                explanation: "The datagram congestion control is a transport layer protocol which deals with reliable connection setup, teardown, congestion control, explicit congestion notification, and feature negotiation. It is used in modern day systems where there are really high chances of congestion."
+            },
+            {
+                question: "66. A _______ is a TCP name for a transport service access point.",
+                options: [
+                    "port",
+                    "pipe",
+                    "node",
+                    "protocol"
+                ],
+                answer: 0,
+                explanation: "Just as the IP address identifies the computer, the network port identifies the application or service running on the computer. A port number is 16 bits. The combination of IP address preceded with the port number is called the socket address."
+            },
+            {
+                question: "67. Transport layer protocols deals with _______",
+                options: [
+                    "application to application communication",
+                    "process to process communication",
+                    "node to node communication",
+                    "man to man communication"
+                ],
+                answer: 1,
+                explanation: "Transport layer is 4th layer in TCP/IP model and OSI reference model. It deals with logical communication between process. It is responsible for delivering a message between network host."
+            },
+            {
+                question: "68. Which of the following is a transport layer protocol?",
+                options: [
+                    "stream control transmission protocol",
+                    "internet control message protocol",
+                    "neighbor discovery protocol",
+                    "dynamic host configuration protocol"
+                ],
+                answer: 0,
+                explanation: "The Stream Control Transmission Protocol (SCTP) is a transport layer protocol used in networking system where streams of data are to be continuously transmitted between two connected network nodes."
+            },
+            {
+                question: "69. Which of the following is used to connect one station with another?",
+                options: [
+                    "VPN",
+                    "VLAN",
+                    "RADIUS",
+                    "NAT"
+                ],
+                answer: 1,
+                explanation: "A VLAN (Virtual Local Area Network) is used to logically segment a network at the data link layer, allowing stations to be grouped together even if they are not on the same network switch."
+            },
+            {
+                question: "70. Which of the following device has File Sharing, and Network Connection the same protection provided?",
+                options: [
+                    "Switch",
+                    "Server",
+                    "Workstation",
+                    "Both B and C"
+                ],
+                answer: 3,
+                explanation: "Both servers and workstations typically have the same level of protection for file sharing and network connections, as they are both endpoints in a network."
+            },
+            {
+                question: "71. Which of the following is VPN Remote Computing Tunneling Protocol?",
+                options: [
+                    "L2F",
+                    "L2TP",
+                    "PPTP",
+                    "All of the above"
+                ],
+                answer: 3,
+                explanation: "All of these protocols (L2F, L2TP, and PPTP) are used for VPN remote computing tunneling."
+            },
+            {
+                question: "72. Which command is used in Linux to change folder permission?",
+                options: [
+                    "CHMOD",
+                    "IS",
+                    "IS-I",
+                    "Top"
+                ],
+                answer: 0,
+                explanation: "The chmod command in Linux is used to change the permissions of files and directories."
+            },
+            {
+                question: "73. Which hardening method is used by a computer for IP address and name?",
+                options: [
+                    "NTFS",
+                    "IFS",
+                    "PKI",
+                    "Access Control List"
+                ],
+                answer: 3,
+                explanation: "Access Control Lists (ACLs) are used to control access to network resources based on IP addresses and names."
+            },
+            {
+                question: "74. Which of the following is not a fibre cable limb property?",
+                options: [
+                    "sending data at a higher speed than copper cable",
+                    "capturing Waves Easily With Copper Cable",
+                    "density function",
+                    "send as single light"
+                ],
+                answer: 1,
+                explanation: "Fiber optic cables do not capture waves easily with copper cable - this is not a property of fiber optic cables."
+            },
+            {
+                question: "75. Which device is used to provide security to mobile storage?",
+                options: [
+                    "flash card",
+                    "smart card",
+                    "public key",
+                    "All of the above"
+                ],
+                answer: 1,
+                explanation: "Smart cards are often used to provide security for mobile storage due to their built-in authentication capabilities."
+            },
+            {
+                question: "76. When the user is banned from downloading software, then what is it called?",
+                options: [
+                    "desktop lockdown",
+                    "desktop lockup",
+                    "both a and b",
+                    "None of these"
+                ],
+                answer: 0,
+                explanation: "Desktop lockdown refers to restricting user capabilities, including preventing software downloads."
+            },
+            {
+                question: "77. Which of the following are dependable tools?",
+                options: [
+                    "flash cards",
+                    "smart cards",
+                    "memory card",
+                    "masterCard"
+                ],
+                answer: 1,
+                explanation: "Smart cards are considered dependable tools for authentication and secure transactions."
+            },
+            {
+                question: "78. Which of the following is an example of a Tunneling Network?",
+                options: [
+                    "Private network data is encapsulated",
+                    "Private data is transmitted over public networks",
+                    "None of the above",
+                    "Both A and B"
+                ],
+                answer: 3,
+                explanation: "Tunneling networks involve both encapsulating private network data and transmitting it over public networks."
+            },
+            {
+                question: "79. The OSI model consists of _______ layers.",
+                options: [
+                    "Five",
+                    "Seven",
+                    "Eight",
+                    "Nine"
+                ],
+                answer: 1,
+                explanation: "The OSI (Open Systems Interconnection) model consists of seven layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application."
+            },
+            {
+                question: "80. Something which has easily understood instructions is said to be",
+                options: [
+                    "Information",
+                    "Icon",
+                    "Word processing",
+                    "User friendly"
+                ],
+                answer: 3,
+                explanation: "User friendly refers to systems or interfaces that are easy to understand and use."
+            },
+            {
+                question: "81. Each computer have a/an _______, and some _______",
+                options: [
+                    "Internet Browsers, Document files",
+                    "Operating System, Application Programs",
+                    "Hard Disk, Programming Programs",
+                    "Operating system, Tally"
+                ],
+                answer: 1,
+                explanation: "Every computer has an operating system and some application programs that run on top of it."
+            },
+            {
+                question: "82. In _______ computers, computation is carried out with physical quantities such as voltage, length, current, temperature, etc.",
+                options: [
+                    "Analog",
+                    "Digital",
+                    "Hybrid",
+                    "Micro computer"
+                ],
+                answer: 0,
+                explanation: "Analog computers use physical quantities like voltage or current to represent and process data."
+            },
+            {
+                question: "83. In Computer terminology 'CAD' is stands for",
+                options: [
+                    "Computer and Design",
+                    "Computer and Device",
+                    "Computer Algorithm in Design",
+                    "Computer Aided Design"
+                ],
+                answer: 3,
+                explanation: "CAD stands for Computer Aided Design, which is the use of computers to assist in the creation, modification, analysis, or optimization of a design."
+            },
+            {
+                question: "84. If you use either Telnet or FTP, which is the highest layer you are using to transmit data?",
+                options: [
+                    "Application",
+                    "Session",
+                    "Presentation",
+                    "Transport"
+                ],
+                answer: 0,
+                explanation: "Both Telnet and FTP are application layer protocols in the TCP/IP model."
+            },
+            {
+                question: "85. Error detection at the data link level is achieved by",
+                options: [
+                    "Equalization",
+                    "Bit stuffing",
+                    "Hamming codes",
+                    "Cyclic redundancy codes"
+                ],
+                answer: 3,
+                explanation: "Cyclic redundancy check (CRC) codes are commonly used for error detection at the data link layer."
+            },
+            {
+                question: "86. Which of the following techniques is used for allocating capacity on a satellite channel using fixed-assignment FDM?",
+                options: [
+                    "Frequency-shift keying",
+                    "Frequency modulation",
+                    "Frequency-division multiple access",
+                    "Amplitude modulation"
+                ],
+                answer: 2,
+                explanation: "Frequency-division multiple access (FDMA) is used to allocate capacity by dividing the frequency band into channels."
+            },
+            {
+                question: "87. The connection between your computer at home and your local ISP is called _______",
+                options: [
+                    "The backbone",
+                    "The home page",
+                    "The home stretch",
+                    "The last mile"
+                ],
+                answer: 3,
+                explanation: "The 'last mile' refers to the final leg of the telecommunications network that delivers services to end-users."
+            },
+            {
+                question: "88. Demodulation is the process of",
+                options: [
+                    "Dividing the high-speed signals into frequency bands",
+                    "Converting digital signals to analog signals",
+                    "Converting analog signals to digital signals",
+                    "Combining many low speed channels into one high speed channel"
+                ],
+                answer: 2,
+                explanation: "Demodulation is the process of extracting the original information-bearing signal from a modulated carrier wave."
+            },
+            {
+                question: "89. Modulation is the process of",
+                options: [
+                    "Echoing every character that is received",
+                    "Sending a file from one computer to another computer",
+                    "Converting digital signals to analog signals",
+                    "Converting analog signals to digital signals"
+                ],
+                answer: 2,
+                explanation: "Modulation is the process of varying one or more properties of a periodic waveform (the carrier signal) with a modulating signal that typically contains information to be transmitted."
+            },
+            {
+                question: "90. Many low-shaped channels are interwoven into one high-speed transmission by",
+                options: [
+                    "Frequency-division multiplexer",
+                    "Time-division multiplexer",
+                    "Both (a) and (b)",
+                    "None of these"
+                ],
+                answer: 1,
+                explanation: "Time-division multiplexing (TDM) allows multiple signals to share a single transmission channel by dividing the signal into different time slots."
+            },
+            {
+                question: "91. Which of the following is the difference between a multiplexer and a statistical multiplexer?",
+                options: [
+                    "Multiplexer use X.25 protocol, while statistical multiplexers use the Alpha protocol",
+                    "Statistical multiplexers need buffers while multiplexers do not need buffers",
+                    "Multiplexers often waste the output link capacity while statistical multiplexers oppose its use",
+                    "Multiplexers use Time Division multiplexing (TDM) while statistical multiplexers uses Frequency division multiplexing (FDM)"
+                ],
+                answer: 1,
+                explanation: "Statistical multiplexers require buffers to handle the variable data rates of input streams, while traditional multiplexers do not."
+            },
+            {
+                question: "92. The synchronous modems are more costly than the asynchronous modems because",
+                options: [
+                    "They operate with a larger bandwidth",
+                    "They produce large volume of data",
+                    "They contain clock recovery circuits",
+                    "They transmit the data with stop and start bits"
+                ],
+                answer: 2,
+                explanation: "Synchronous modems require clock recovery circuits to maintain synchronization between the transmitter and receiver, which adds to their cost."
+            },
+            {
+                question: "93. To connect a computer with a device in the same room, you might be likely to use",
+                options: [
+                    "A ground station",
+                    "A dedicated line",
+                    "A coaxial cable",
+                    "All of the above"
+                ],
+                answer: 2,
+                explanation: "Coaxial cables are commonly used for short-distance connections within the same room due to their good shielding and bandwidth characteristics."
+            },
+            {
+                question: "94. Which of the following is the broadcast address for a Class B network ID using the default subnetmask?",
+                options: [
+                    "172.16.10.255",
+                    "255.255.255.255",
+                    "172.16.255.255",
+                    "172.255.255.255"
+                ],
+                answer: 2,
+                explanation: "For a Class B network with default subnet mask 255.255.0.0, the broadcast address is formed by setting all host bits to 1, resulting in 172.16.255.255."
+            },
+            {
+                question: "95. You have an IP address of 172.16.13.5 with a 255.255.255.128 subnet mask. What is your class of address, subnet address, and broadcast address?",
+                options: [
+                    "Class A, Subnet 172.16.13.0, Broadcast address 172.16.13.127",
+                    "Class B, Subnet 172.16.13.0, Broadcast address 172.16.13.127",
+                    "Class B, Subnet 172.16.13.0, Broadcast address 172.16.13.255",
+                    "Class B, Subnet 172.16.0.0, Broadcast address 172.16.255.255"
+                ],
+                answer: 1,
+                explanation: "172.x.x.x is a Class B address. With subnet mask 255.255.255.128, the subnet is 172.16.13.0 and broadcast address is 172.16.13.127."
+            },
+            {
+                question: "96. If you wanted to have 12 subnets with a Class C network ID, which subnet mask would you use?",
+                options: [
+                    "255.255.255.252",
+                    "255.255.255.255",
+                    "255.255.255.240",
+                    "255.255.255.248"
+                ],
+                answer: 2,
+                explanation: "For 12 subnets with a Class C network, you need at least 4 subnet bits (2^4=16 subnets). The subnet mask would be 255.255.255.240 (11110000 in the last octet)."
+            },
+            {
+                question: "97. The combination of _______ and _______ is often termed the local address of the local portion of the IP address.",
+                options: [
+                    "Network number and host number",
+                    "Network number and subnet number",
+                    "Subnet number and host number",
+                    "Host number"
+                ],
+                answer: 2,
+                explanation: "The combination of subnet number and host number is called the local address because it's only meaningful within the local subnet."
+            },
+            {
+                question: "98. _______ implies that all subnets obtained from the same subnet mask.",
+                options: [
+                    "Static subnetting",
+                    "Dynamic subnetting",
+                    "Variable length subnetting",
+                    "Dynamic length subnetting"
+                ],
+                answer: 0,
+                explanation: "Static subnetting uses the same subnet mask for all subnets in the network."
+            },
+            {
+                question: "99. State whether true or false. i) A connection oriented protocol can only use unicast addresses. ii) The any cast service is included in IPV6.",
+                options: [
+                    "True, True",
+                    "True, False",
+                    "False, True",
+                    "False, False"
+                ],
+                answer: 0,
+                explanation: "Both statements are true. Connection-oriented protocols typically use unicast addresses, and IPv6 includes anycast addressing."
+            },
+            {
+                question: "100. _______ is a high performance fiber optic token ring LAN running at 100 Mbps over distances upto 1000 stations connected.",
+                options: [
+                    "FDDI",
+                    "FDDT",
+                    "FDDR",
+                    "FOTR"
+                ],
+                answer: 0,
+                explanation: "FDDI (Fiber Distributed Data Interface) is a standard for data transmission in a local area network that uses optical fiber as its standard underlying physical medium."
+            }
+        ];
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const quizContent = document.getElementById('quiz-content');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanation = document.getElementById('explanation');
+        const currentQuestionDisplay = document.getElementById('current-question');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const resultsMessage = document.getElementById('results-message');
+        
+        // Buttons
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const explanationBtn = document.getElementById('explanation-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Quiz state
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOptions = Array(questions.length).fill(null);
+        let answeredQuestions = Array(questions.length).fill(false);
+        let timer;
+        const quizDuration = 6000; // 100 minutes in seconds
+        let timeLeft = quizDuration;
+        let timerRunning = false;
+
+        // Initialize the quiz
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedOptions = Array(questions.length).fill(null);
+            answeredQuestions = Array(questions.length).fill(false);
+            timeLeft = quizDuration;
+            timerRunning = false;
+            
+            startScreen.style.display = 'block';
+            quizContent.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            
+            updateTimerDisplay(timeLeft);
+        }
+
+        // Start the quiz
+        function startQuiz() {
+            startScreen.style.display = 'none';
+            quizContent.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            
+            startTimer();
+            displayQuestion();
+            updateProgressBar();
+        }
+
+        // Display the current question
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            questionText.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionId = `option-${currentQuestion}-${index}`;
+                const optionElement = document.createElement('label');
+                optionElement.classList.add('option-label');
+                optionElement.htmlFor = optionId;
+                
+                if (selectedOptions[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.id = optionId;
+                radioInput.name = `question-${currentQuestion}`;
+                radioInput.classList.add('option-radio');
+                radioInput.value = index;
+                radioInput.checked = selectedOptions[currentQuestion] === index;
+                radioInput.addEventListener('change', () => selectOption(index));
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(radioInput);
+                optionElement.appendChild(optionText);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            explanation.textContent = question.explanation;
+            explanation.style.display = 'none';
+            explanationBtn.disabled = !answeredQuestions[currentQuestion];
+            
+            currentQuestionDisplay.textContent = currentQuestion + 1;
+            scoreDisplay.textContent = score;
+            
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = false;
+            
+            if (currentQuestion === questions.length - 1) {
+                nextBtn.textContent = 'Finish';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.textContent = 'Next';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // Select an option
+        function selectOption(index) {
+            // Remove selected class from all options
+            const options = document.querySelectorAll('.option-label');
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Add selected class to clicked option
+            const selectedOption = document.querySelector(`input[name="question-${currentQuestion}"]:checked`).parentNode;
+            selectedOption.classList.add('selected');
+            selectedOptions[currentQuestion] = index;
+            
+            // Check if answer is correct
+            const question = questions[currentQuestion];
+            const isCorrect = index === question.answer;
+            
+            if (!answeredQuestions[currentQuestion]) {
+                if (isCorrect) {
+                    score++;
+                    scoreDisplay.textContent = score;
+                }
+                answeredQuestions[currentQuestion] = true;
+            }
+            
+            // Show correct/incorrect feedback
+            const correctOption = document.querySelector(`input[name="question-${currentQuestion}"][value="${question.answer}"]`).parentNode;
+            correctOption.classList.add('correct');
+            if (!isCorrect) {
+                selectedOption.classList.add('incorrect');
+            }
+            
+            explanationBtn.disabled = false;
+            updateProgressBar();
+        }
+
+        // Show explanation
+        function showExplanation() {
+            explanation.style.display = 'block';
+            explanation.classList.add('animate__animated', 'animate__fadeIn');
+        }
+
+        // Navigate to previous question
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        // Navigate to next question
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const answeredCount = answeredQuestions.filter(Boolean).length;
+            const progress = (answeredCount / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Start timer
+        function startTimer() {
+            if (!timerRunning) {
+                timerRunning = true;
+                updateTimerDisplay(timeLeft);
+                
+                timer = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay(timeLeft);
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        finishQuiz();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Update timer display
+        function updateTimerDisplay(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timeDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            
+            if (seconds <= 300) { // 5 minutes or less
+                timeDisplay.style.color = '#e74c3c';
+                timeDisplay.classList.add('animate__animated', 'animate__pulse');
+            } else {
+                timeDisplay.style.color = '';
+                timeDisplay.classList.remove('animate__animated', 'animate__pulse');
+            }
+        }
+
+        // Finish the quiz
+        function finishQuiz() {
+            clearInterval(timer);
+            
+            quizContent.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            finalScoreDisplay.textContent = `${score} out of ${questions.length}`;
+            
+            const percentage = (score / questions.length) * 100;
+            if (percentage >= 80) {
+                resultsMessage.textContent = 'Excellent! You have a strong understanding of computer networking concepts.';
+            } else if (percentage >= 60) {
+                resultsMessage.textContent = 'Good job! You have a solid foundation in computer networking, but there are some areas to review.';
+            } else if (percentage >= 40) {
+                resultsMessage.textContent = 'Not bad! You have some understanding of computer networking, but you should review the material.';
+            } else {
+                resultsMessage.textContent = 'Keep practicing! Review the fundamental concepts and try again.';
+            }
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startQuiz);
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', nextQuestion);
+        explanationBtn.addEventListener('click', showExplanation);
+        submitBtn.addEventListener('click', finishQuiz);
+        restartBtn.addEventListener('click', initQuiz);
+
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
